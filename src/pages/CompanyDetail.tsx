@@ -6,18 +6,22 @@ import {
 } from "recharts";
 import { companies, categoryColors } from "@/data/companies";
 
+import Layout from "@/components/Layout";
+
 const CompanyDetail = () => {
   const { id } = useParams();
   const company = companies.find((c) => c.id === id);
 
   if (!company) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="font-display text-2xl font-bold text-foreground">Company not found</h1>
-          <Link to="/" className="mt-4 inline-block text-primary hover:underline">← Back to portal</Link>
+      <Layout showSidebar={false}>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="font-display text-2xl font-bold text-foreground">Company not found</h1>
+            <Link to="/" className="mt-4 inline-block text-primary hover:underline">← Back to portal</Link>
+          </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
@@ -33,10 +37,10 @@ const CompanyDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-30">
-        <div className="mx-auto max-w-5xl px-6 py-4 flex items-center gap-4">
+    <Layout>
+      {/* Sub-Header */}
+      <div className="border-b border-border bg-card/40 backdrop-blur-sm sticky top-[73px] z-20">
+        <div className="mx-auto max-w-5xl px-6 py-3 flex items-center gap-4">
           <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">All Companies</span>
@@ -44,7 +48,7 @@ const CompanyDetail = () => {
           <div className="h-4 w-px bg-border" />
           <span className="font-display font-semibold text-foreground text-sm truncate">{company.name}</span>
         </div>
-      </header>
+      </div>
 
       <main className="mx-auto max-w-5xl px-6 pb-20">
         {/* SECTION 1: Identity Hero */}
@@ -303,7 +307,7 @@ const CompanyDetail = () => {
           </div>
         </section>
       </main>
-    </div>
+    </Layout>
   );
 };
 
