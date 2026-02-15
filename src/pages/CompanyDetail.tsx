@@ -1,8 +1,10 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, MapPin } from "lucide-react";
+import { ArrowLeft, MapPin, ChevronRight, ChevronLeft } from "lucide-react";
 import { companies, categoryColors } from "@/data/companies";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 import Layout from "@/components/Layout";
 import CompanyOverview from "@/components/company/CompanyOverview";
@@ -53,6 +55,14 @@ const CompanyDetail = () => {
       const { scrollLeft, scrollWidth, clientWidth } = container;
       setShowLeftFade(scrollLeft > 10);
       setShowRightFade(scrollLeft < scrollWidth - clientWidth - 10);
+    }
+  };
+
+  const scroll = (direction: "left" | "right") => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const scrollAmount = direction === "left" ? -200 : 200;
+      container.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
 
@@ -132,10 +142,26 @@ const CompanyDetail = () => {
         <div className="mt-8">
           <Tabs defaultValue="overview" className="w-full">
             <div className="sticky top-[72px] z-10 bg-background/95 backdrop-blur-sm py-2 -mx-6 px-6 border-b border-border mb-6 transition-all duration-300">
-              <div className="relative">
+              <div className="relative flex items-center group/tabs">
+                {/* Left Scroll Button & Fade */}
+                <div className={cn(
+                  "absolute left-0 top-0 bottom-0 z-30 flex items-center transition-all duration-500 pointer-events-none",
+                  showLeftFade ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+                )}>
+                  <div className="absolute inset-y-0 left-[-24px] bg-gradient-to-r from-background via-background/95 via-background/50 to-transparent w-24" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => scroll("left")}
+                    className="h-8 w-8 rounded-full bg-background border border-border shadow-md hover:bg-accent relative z-40 pointer-events-auto ml-1"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                </div>
+
                 <div
                   ref={scrollContainerRef}
-                  className="overflow-x-auto scrollbar-hide py-4 -mx-6"
+                  className="overflow-x-auto scrollbar-hide py-4 -mx-6 flex-1"
                 >
                   <TabsList className="h-auto bg-transparent flex justify-start w-max min-w-full gap-2 pl-6 pr-12">
                     {tabs.map((tab) => (
@@ -152,9 +178,22 @@ const CompanyDetail = () => {
                     ))}
                   </TabsList>
                 </div>
-                {/* Natural fade gradient with multiple stops for a seamless transition */}
-                <div className={`absolute top-0 bottom-0 right-[-24px] w-40 bg-gradient-to-l from-background via-background/90 via-background/40 to-transparent pointer-events-none z-20 transition-opacity duration-300 ${showRightFade ? 'opacity-100' : 'opacity-0'}`} />
-                <div className={`absolute top-0 bottom-0 left-[-24px] w-12 bg-gradient-to-r from-background via-background/40 to-transparent pointer-events-none z-20 transition-opacity duration-300 ${showLeftFade ? 'opacity-60' : 'opacity-0'}`} />
+
+                {/* Right Scroll Button & Fade */}
+                <div className={cn(
+                  "absolute right-0 top-0 bottom-0 z-30 flex items-center transition-all duration-500 pointer-events-none",
+                  showRightFade ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"
+                )}>
+                  <div className="absolute inset-y-0 right-[-24px] bg-gradient-to-l from-background via-background/95 via-background/50 to-transparent w-24" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => scroll("right")}
+                    className="h-8 w-8 rounded-full bg-background border border-border shadow-md hover:bg-accent relative z-40 pointer-events-auto mr-1"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </div>
 
