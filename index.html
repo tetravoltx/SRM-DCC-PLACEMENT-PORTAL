@@ -1,38 +1,66 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SRM Placement Portal</title>
-    <meta name="description" content="SRM Placement Portal" />
-    <meta name="author" content="SRM" />
-    <link rel="icon" href="/srmicon.png" />
 
-    <meta property="og:title" content="SRM Placement Portal" />
-    <meta property="og:description" content="SRM Placement Portal" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/srmlogo.png" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SRM Placement Portal - Directorate of Career Centre</title>
+  <meta name="description"
+    content="Official SRM DCC Placement Portal - Comprehensive placement insights, company analytics, skill requirements, and hiring trends for SRM students. Compare companies, analyze selection processes, and prepare for campus placements." />
+  <meta name="author" content="SRM Directorate of Career Centre" />
+  <meta name="keywords"
+    content="SRM placements, campus recruitment, company analytics, skill requirements, placement preparation, career centre, SRM DCC" />
+  <link rel="icon" href="/srmicon.png" />
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="SRM Placement Portal" />
-    <meta name="twitter:description" content="SRM Placement Portal" />
-    <meta name="twitter:image" content="/srmlogo.png" />
-    <script>
-      (function() {
-        try {
-          const theme = localStorage.getItem('theme');
-          if (theme === 'dark') {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
-        } catch (e) {}
-      })();
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="SRM Placement Portal - Directorate of Career Centre" />
+  <meta property="og:description"
+    content="Official placement portal providing comprehensive company insights, skill analytics, and hiring trends for SRM students." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/srmlogo.png" />
+  <meta property="og:url" content="https://placement.srm.edu.in" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SRM Placement Portal - Directorate of Career Centre" />
+  <meta name="twitter:description"
+    content="Official placement portal providing comprehensive company insights, skill analytics, and hiring trends for SRM students." />
+  <meta name="twitter:image" content="/srmlogo.png" />
+
+  <!-- JSON-LD Structured Data for SEO & LLM -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "SRM Directorate of Career Centre",
+      "alternateName": "SRM DCC",
+      "url": "https://placement.srm.edu.in",
+      "logo": "/srmlogo.png",
+      "description": "Official placement portal providing comprehensive company insights, skill requirements, and hiring analytics for SRM students.",
+      "department": {
+        "@type": "Organization",
+        "name": "Directorate of Career Centre",
+        "description": "Manages campus placements and career development for SRM students"
+      }
+    }
     </script>
-  </head>
+  <script>
+    (function () {
+      try {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) { }
+    })();
+  </script>
+</head>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

@@ -1,4 +1,4 @@
-import { Rocket, Zap, Globe, Cpu, ChevronRight } from "lucide-react";
+import { Rocket, Sparkles, Globe, Cpu, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const InnovXSection = () => {
@@ -9,7 +9,7 @@ const InnovXSection = () => {
                 <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-primary/20 blur-3xl" />
                 <div className="flex items-center gap-3 mb-4">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 backdrop-blur-md">
-                        <Zap className="h-5 w-5 text-primary" />
+                        <Sparkles className="h-5 w-5 text-primary" />
                     </div>
                     <h2 className="font-display text-2xl font-bold tracking-tight">InnovX</h2>
                 </div>
@@ -18,7 +18,7 @@ const InnovXSection = () => {
                 </p>
                 <button className="flex w-full items-center justify-between rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold transition-all hover:bg-white/20">
                     Explore Startups
-                    <ChevronRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4" />
                 </button>
             </div>
 

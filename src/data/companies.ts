@@ -15,6 +15,43 @@ export interface SelectionRound {
   mode: string;
   duration: string;
   description: string;
+  focus?: string; // New: Focus of the round
+  questions?: string[]; // New: Typical questions
+}
+
+export interface Skill {
+  name: string;
+  bloomLevel: "CU" | "AP" | "AN" | "EV" | "CR"; // Conceptual, Application, Analysis, Evaluation, Creation
+  level: number; // 1-10
+  proficiency: number; // 1-10
+  topics: string[];
+}
+
+export interface InnovXProject {
+  title: string;
+  description: string;
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  skills: string[];
+  relevance: string;
+}
+
+export interface Leader {
+  name: string;
+  role: string;
+  image: string;
+  bio?: string;
+}
+
+export interface Financials {
+  revenueGrowth: string;
+  profitMargin: string;
+  rndIvestment: string;
+}
+
+export interface CultureItem {
+  title: string;
+  description: string;
+  icon?: string;
 }
 
 export interface Company {
@@ -52,6 +89,14 @@ export interface Company {
   department: string;
   employmentType: string;
   selectionProcess: SelectionRound[];
+  skills?: Skill[];
+  innovxProjects?: InnovXProject[];
+  leadership?: Leader[];
+  financials?: Financials;
+  culture?: CultureItem[];
+  about?: string;
+  vision?: string;
+  mission?: string;
 }
 
 export const companies: Company[] = [
@@ -102,11 +147,36 @@ export const companies: Company[] = [
     department: "Engineering",
     employmentType: "Full-time",
     selectionProcess: [
-      { title: "Online Assessment", mode: "Online", duration: "90 minutes", description: "Two coding problems focusing on data structures, algorithms, and problem-solving skills." },
-      { title: "Technical Interview Round 1", mode: "Virtual", duration: "45 minutes", description: "In-depth coding interview covering algorithms, system design fundamentals, and analytical thinking." },
-      { title: "Technical Interview Round 2", mode: "Virtual", duration: "45 minutes", description: "Advanced problem-solving with focus on scalable system design and optimization." },
-      { title: "Googleyness & Leadership", mode: "Virtual", duration: "45 minutes", description: "Behavioral interview assessing cultural fit, collaboration, and leadership qualities." },
+      { title: "Online Assessment", mode: "Online", duration: "90 minutes", description: "Two coding problems focusing on data structures, algorithms, and problem-solving skills.", focus: "DSA & Problem Solving", questions: ["Dynamic Programming", "Graph Theory"] },
+      { title: "Technical Interview Round 1", mode: "Virtual", duration: "45 minutes", description: "In-depth coding interview covering algorithms, system design fundamentals, and analytical thinking.", focus: "Algorithms & Clean Code", questions: ["Tree Traversal", "System Design Basics"] },
+      { title: "Technical Interview Round 2", mode: "Virtual", duration: "45 minutes", description: "Advanced problem-solving with focus on scalable system design and optimization.", focus: "System Design & Scalability", questions: ["Distributed Caching", "Load Balancing"] },
+      { title: "Googleyness & Leadership", mode: "Virtual", duration: "45 minutes", description: "Behavioral interview assessing cultural fit, collaboration, and leadership qualities.", focus: "Culture Fit", questions: ["Tell me about a time you failed", "Conflict Resolution"] },
     ],
+    skills: [
+      { name: "Algorithms", bloomLevel: "EV", level: 8, proficiency: 9, topics: ["Dynamic Programming", "Graph Theory", "Greedy Args"] },
+      { name: "System Design", bloomLevel: "AN", level: 7, proficiency: 8, topics: ["Scalability", "Load Balancing", "Consistency Patterns"] },
+      { name: "Data Structures", bloomLevel: "AP", level: 9, proficiency: 9, topics: ["Trees", "Graphs", "Heaps", "Tries"] },
+    ],
+    innovxProjects: [
+      { title: "Distributed Search Engine", description: "Build a mini search engine that crawls, indexes, and serves queries.", difficulty: "Advanced", skills: ["Go", "Distributed Systems", "MapReduce"], relevance: "Core Search Infra" },
+      { title: "AI Image Classifier", description: "Train a model to classify images using TensorFlow.", difficulty: "Intermediate", skills: ["Python", "TensorFlow", "ML"], relevance: "Google Photos / Lens" },
+    ],
+    leadership: [
+      { name: "Sundar Pichai", role: "CEO", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Sundar_pichai.png/440px-Sundar_pichai.png" },
+      { name: "Ruth Porat", role: "CFO", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Ruth_Porat_2019.jpg/440px-Ruth_Porat_2019.jpg" },
+    ],
+    financials: {
+      revenueGrowth: "15% YoY",
+      profitMargin: "24%",
+      rndIvestment: "$45B (2024)",
+    },
+    culture: [
+      { title: "Innovation", description: "Encourages 20% time for personal projects." },
+      { title: "Inclusivity", description: "Diverse workforce with global perspective." },
+    ],
+    about: "Google is not just a search engine; it's a global technology leader that organizes the world's information and makes it universally accessible and useful. From Search to Maps, Gmail to YouTube, Google's products are used by billions of people every day. The company fosters a culture of innovation, encouraging engineers to solve big problems.",
+    vision: "To provide access to the world's information in one click.",
+    mission: "To organize the world's information and make it universally accessible and useful.",
   },
   {
     id: "microsoft",

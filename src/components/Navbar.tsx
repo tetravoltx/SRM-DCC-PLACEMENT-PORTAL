@@ -7,9 +7,20 @@ const Navbar = () => {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    // Check initial theme
-    const isDarkMode = document.documentElement.classList.contains("dark");
-    setIsDark(isDarkMode);
+    // Initial check
+    const checkTheme = () => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    };
+    checkTheme();
+
+    // Observer for external changes (e.g. from index.html script or manual class manipulation)
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   const toggleTheme = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -19,7 +30,7 @@ const Navbar = () => {
     document.documentElement.style.setProperty("--y", `${y}px`);
 
     const applyTheme = (newDark: boolean) => {
-      setIsDark(newDark);
+      // Logic handled by MutationObserver now for state, but we still need to toggle class
       if (newDark) {
         document.documentElement.classList.add("dark");
         localStorage.setItem("theme", "dark");
@@ -28,6 +39,7 @@ const Navbar = () => {
         localStorage.setItem("theme", "light");
       }
     };
+
 
     const newMode = !isDark;
 
@@ -53,7 +65,11 @@ const Navbar = () => {
     <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-30 w-full">
       <div className="mx-auto max-w-full px-6 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-          <img src="/srmlogo.png" alt="SRM Logo" className="h-10 w-auto object-contain" />
+          <img
+            src={isDark ? "/srmlogo-dark.png" : "/srmlogo.png"}
+            alt="SRM Logo"
+            className="h-10 w-auto object-contain"
+          />
           <div className="flex flex-col leading-tight hidden sm:flex">
             <span className="font-semibold text-foreground text-sm">
               Placement Portal

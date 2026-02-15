@@ -1,4 +1,4 @@
-import { LayoutDashboard, Building2, BarChart3, Users2, Lightbulb } from "lucide-react";
+import { Home, Building, TrendingUp, UserCheck, Sparkles, GraduationCap, LogOut } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -6,11 +6,11 @@ const Sidebar = () => {
     const location = useLocation();
 
     const navItems = [
-        { name: "Dashboard", icon: LayoutDashboard, path: "/" },
-        { name: "Companies", icon: Building2, path: "/?view=companies" },
-        { name: "Skill Set Analytics", icon: BarChart3, path: "/analytics" },
-        { name: "Hiring Rounds", icon: Users2, path: "/rounds" },
-        { name: "Insights", icon: Lightbulb, path: "/insights" },
+        { name: "Dashboard", icon: Home, path: "/" },
+        { name: "Companies", icon: Building, path: "/?view=companies" },
+        { name: "Skill Set Analytics", icon: TrendingUp, path: "/analytics" },
+        { name: "Hiring Rounds", icon: UserCheck, path: "/rounds" },
+        { name: "Insights", icon: Sparkles, path: "/insights" },
     ];
 
     return (
@@ -42,6 +42,19 @@ const Sidebar = () => {
                     );
                 })}
             </nav>
+
+            <div className="mt-auto pt-6 border-t border-border">
+                <button className="flex items-center gap-3 w-full px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:bg-secondary/50 hover:text-foreground transition-all group">
+                    <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center border border-border">
+                        <GraduationCap className="h-4 w-4" />
+                    </div>
+                    <div className="flex flex-col items-start text-left">
+                        <span className="text-sm font-medium text-foreground">Student Name</span>
+                        <span className="text-xs text-muted-foreground">student@srm.edu.in</span>
+                    </div>
+                    <LogOut className="h-4 w-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                </button>
+            </div>
         </aside>
     );
 };

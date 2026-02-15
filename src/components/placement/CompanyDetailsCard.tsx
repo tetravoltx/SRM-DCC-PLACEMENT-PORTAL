@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MapPin, Building2, Users, Briefcase, ChevronRight, CheckCircle2 } from "lucide-react";
+import { MapPin, Building, Users, Briefcase, ArrowRight, BadgeCheck } from "lucide-react";
 import { Company, categoryColors } from "@/data/companies";
 import { cn } from "@/lib/utils";
 
@@ -38,7 +38,7 @@ const CompanyDetailsCard = ({ company }: CompanyDetailsCardProps) => {
                         </div>
                         <p className="text-sm text-muted-foreground line-clamp-1 mb-3">{company.descriptor}</p>
                         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                            <span className="flex items-center gap-1"><Building2 className="h-3 w-3" />{company.industry}</span>
+                            <span className="flex items-center gap-1"><Building className="h-3 w-3" />{company.industry}</span>
                             <span className="flex items-center gap-1"><Briefcase className="h-3 w-3" />{company.type}</span>
                             <span className="flex items-center gap-1"><Users className="h-3 w-3" />{company.employees}</span>
                         </div>
@@ -57,7 +57,7 @@ const CompanyDetailsCard = ({ company }: CompanyDetailsCardProps) => {
                         <div className="space-y-1">
                             {company.eligibility.slice(0, 2).map((e, i) => (
                                 <div key={i} className="flex items-center gap-1.5 text-xs text-foreground/80">
-                                    <CheckCircle2 className="h-3 w-3 text-primary" />
+                                    <BadgeCheck className="h-3 w-3 text-primary" />
                                     <span className="truncate max-w-[120px]">{e}</span>
                                 </div>
                             ))}
@@ -77,7 +77,7 @@ const CompanyDetailsCard = ({ company }: CompanyDetailsCardProps) => {
                         </span>
                     </div>
                     <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
-                        <ChevronRight className="h-5 w-5" />
+                        <ArrowRight className="h-5 w-5" />
                     </div>
                 </div>
             </div>

@@ -1,12 +1,14 @@
+import React from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, MapPin, Building2, Users, Globe, Download, Briefcase, Calendar } from "lucide-react";
-import {
-  LineChart, Line, AreaChart, Area, BarChart, Bar,
-  XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid,
-} from "recharts";
+import { ArrowLeft, MapPin } from "lucide-react";
 import { companies, categoryColors } from "@/data/companies";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 import Layout from "@/components/Layout";
+import CompanyOverview from "@/components/company/CompanyOverview";
+import CompanySkills from "@/components/company/CompanySkills";
+import CompanyInnovX from "@/components/company/CompanyInnovX";
+import CompanyHiring from "@/components/company/CompanyHiring";
 
 const CompanyDetail = () => {
   const { id } = useParams();
@@ -25,22 +27,54 @@ const CompanyDetail = () => {
     );
   }
 
-  const compensationBreakdown = [
-    { label: "Fixed", value: company.fixedComponent, percent: Math.round((company.fixedComponent / company.ctcValue) * 100) },
-    { label: "Variable", value: company.variableComponent, percent: Math.round((company.variableComponent / company.ctcValue) * 100) },
-    { label: "Bonus", value: company.bonus, percent: Math.round((company.bonus / company.ctcValue) * 100) },
+  // Mandatory Tabs (All Required)
+  const tabs = [
+    { id: "overview", label: "Overview", component: <CompanyOverview company={company} /> },
+    { id: "skills", label: "Skill Matrix", component: <CompanySkills skills={company.skills} /> },
+    { id: "innovx", label: "InnovX", component: <CompanyInnovX projects={company.innovxProjects} /> },
+    { id: "hiring", label: "Hiring Rounds", component: <CompanyHiring company={company} /> },
+    // Data-light tabs for now, reusing Overview or placeholders
+    { id: "business", label: "Business & Market", component: <div className="p-10 text-center text-muted-foreground">Market Position & Business Model to be added.</div> },
+    { id: "leadership", label: "Leadership", component: <div className="p-10 text-center text-muted-foreground">Detailed Leadership & Governance structure.</div> },
+    { id: "financials", label: "Financials", component: <div className="p-10 text-center text-muted-foreground">Detailed Financial reports & projections.</div> },
+    { id: "tech", label: "Technology", component: <div className="p-10 text-center text-muted-foreground">Technology Stack & Innovation roadmap.</div> },
+    { id: "culture", label: "Culture", component: <div className="p-10 text-center text-muted-foreground">Work Life, Benefits & Cultural nuances.</div> },
+    { id: "risk", label: "Risk & ESG", component: <div className="p-10 text-center text-muted-foreground">Risk Management & ESG goals.</div> },
+    { id: "strategy", label: "Strategy", component: <div className="p-10 text-center text-muted-foreground">Future Outlook & Strategic goals.</div> },
   ];
 
-  const formatCurrency = (v: number) => {
-    if (v >= 100000) return `₹${(v / 100000).toFixed(1)}L`;
-    return `₹${v.toLocaleString("en-IN")}`;
+  const [showLeftFade, setShowLeftFade] = React.useState(false);
+  const [showRightFade, setShowRightFade] = React.useState(true);
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+
+  const handleScroll = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const { scrollLeft, scrollWidth, clientWidth } = container;
+      setShowLeftFade(scrollLeft > 10);
+      setShowRightFade(scrollLeft < scrollWidth - clientWidth - 10);
+    }
   };
+
+  React.useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      handleScroll();
+      container.addEventListener("scroll", handleScroll);
+      window.addEventListener("resize", handleScroll);
+      return () => {
+        container.removeEventListener("scroll", handleScroll);
+        window.removeEventListener("resize", handleScroll);
+      };
+    }
+  }, []);
 
   return (
     <Layout>
       {/* Sub-Header */}
-      <div className="border-b border-border bg-card/40 backdrop-blur-sm sticky top-[73px] z-20">
-        <div className="mx-auto max-w-5xl px-6 py-3 flex items-center gap-4">
+      {/* Sub-Header (Scrolls away to save space) */}
+      <div className="border-b border-border bg-card/40 backdrop-blur-sm">
+        <div className="mx-auto max-w-7xl px-6 py-3 flex items-center gap-4">
           <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-4 w-4" />
             <span className="hidden sm:inline">All Companies</span>
@@ -50,262 +84,89 @@ const CompanyDetail = () => {
         </div>
       </div>
 
-      <main className="mx-auto max-w-5xl px-6 pb-20">
+      <main className="mx-auto max-w-7xl px-6 pb-20">
         {/* SECTION 1: Identity Hero */}
-        <section className="pt-12 pb-10">
+        <section className="pt-10 pb-8">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
             <div className="flex items-start gap-5">
-              <div className="h-16 w-16 rounded-2xl bg-card shadow-card flex items-center justify-center overflow-hidden p-2 flex-shrink-0">
+              <div className="h-20 w-20 rounded-2xl bg-card shadow-card flex items-center justify-center overflow-hidden p-3 flex-shrink-0 border border-border">
                 <img
                   src={company.logo}
                   alt={company.name}
                   className="h-full w-full object-contain"
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = 'none';
-                    (e.target as HTMLImageElement).parentElement!.innerHTML = `<span class="text-2xl font-bold text-muted-foreground">${company.name[0]}</span>`;
+                    (e.target as HTMLImageElement).parentElement!.innerText = company.name[0];
                   }}
                 />
               </div>
               <div>
-                <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight">
+                <h1 className="font-display text-4xl font-extrabold text-foreground tracking-tight">
                   {company.name}
                 </h1>
-                <p className="mt-1 text-muted-foreground text-lg">{company.descriptor}</p>
-                <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                  <span>{company.industry}</span>
-                  <span className="text-border">·</span>
-                  <span>{company.type}</span>
-                  <span className="text-border">·</span>
-                  <span>Founded {company.founded}</span>
-                  <span className="text-border">·</span>
-                  <span>{company.employees} Employees</span>
+                <p className="mt-2 text-muted-foreground text-lg max-w-2xl">{company.descriptor}</p>
+                <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                  <span className={`rounded-full px-3 py-1 text-xs font-bold ${categoryColors[company.category]}`}>
+                    {company.category}
+                  </span>
+                  <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary text-secondary-foreground border border-border/50">
+                    <MapPin className="h-3.5 w-3.5" />
+                    {company.locations[0]}
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-secondary text-secondary-foreground border border-border/50">
+                    {company.industry}
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col items-start md:items-end gap-3 flex-shrink-0">
-              <span className={`rounded-full px-4 py-1.5 text-sm font-medium ${categoryColors[company.category]}`}>
-                {company.category}
-              </span>
-              <p className="text-3xl font-bold text-compensation font-display">{company.compensationRange}</p>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1.5">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {company.locations.join(", ")}
-                </span>
-                <span className="rounded-full bg-secondary px-3 py-0.5 text-xs font-medium text-secondary-foreground">
-                  {company.workMode}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Eligibility Chips */}
-          <div className="mt-8 flex flex-wrap gap-2">
-            {company.eligibility.map((e) => (
-              <span key={e} className="rounded-xl bg-accent px-4 py-2 text-sm font-medium text-accent-foreground">
-                {e}
-              </span>
-            ))}
-          </div>
-        </section>
-
-        <hr className="border-border" />
-
-        {/* SECTION 2: Company Snapshot */}
-        <section className="py-10">
-          <h2 className="font-display text-xl font-bold text-foreground mb-6">Company Snapshot</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
-            {[
-              { label: "Revenue", value: company.revenue, icon: Building2 },
-              { label: "Market Cap", value: company.marketCap, icon: Globe },
-              { label: "Employees", value: company.employees, icon: Users },
-              { label: "Global Presence", value: company.globalPresence, icon: Globe },
-              { label: "Campus Hires '25", value: String(company.studentsSelected), icon: Briefcase },
-            ].map((m) => (
-              <div key={m.label} className="rounded-2xl bg-card p-5 shadow-soft">
-                <p className="text-2xl font-bold text-foreground font-display">{m.value}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{m.label}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <hr className="border-border" />
-
-        {/* SECTION 3: Visual Insights */}
-        <section className="py-10">
-          <h2 className="font-display text-xl font-bold text-foreground mb-6">Visual Insights</h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Hiring Trend */}
-            <div className="rounded-2xl bg-card p-6 shadow-soft">
-              <h3 className="text-sm font-medium text-muted-foreground mb-4">Hiring Trend</h3>
-              <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={company.hiringTrend}>
-                    <defs>
-                      <linearGradient id="hiringGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="hsl(var(--chart-line))" stopOpacity={0.15} />
-                        <stop offset="100%" stopColor="hsl(var(--chart-line))" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="year" tick={{ fontSize: 12, fill: "hsl(var(--text-tertiary))" }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 12, fill: "hsl(var(--text-tertiary))" }} axisLine={false} tickLine={false} width={30} />
-                    <Tooltip
-                      contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px", fontSize: "13px" }}
-                    />
-                    <Area type="monotone" dataKey="count" stroke="hsl(var(--chart-line))" strokeWidth={2} fill="url(#hiringGrad)" name="Students Hired" />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Compensation Trend */}
-            <div className="rounded-2xl bg-card p-6 shadow-soft">
-              <h3 className="text-sm font-medium text-muted-foreground mb-4">Compensation Trend (LPA)</h3>
-              <div className="h-48">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={company.compensationHistory}>
-                    <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="year" tick={{ fontSize: 12, fill: "hsl(var(--text-tertiary))" }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 12, fill: "hsl(var(--text-tertiary))" }} axisLine={false} tickLine={false} width={30} />
-                    <Tooltip
-                      contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "12px", fontSize: "13px" }}
-                    />
-                    <Line type="monotone" dataKey="ctc" stroke="hsl(var(--compensation))" strokeWidth={2} dot={{ r: 3, fill: "hsl(var(--compensation))" }} name="CTC (LPA)" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+            <div className="flex flex-col items-start md:items-end gap-2 flex-shrink-0 bg-card p-4 rounded-2xl shadow-soft border border-border">
+              <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">CTC Range</p>
+              <p className="text-3xl font-bold text-primary font-display">{company.compensationRange}</p>
+              <p className="text-xs text-muted-foreground mt-1 text-right w-full">View breakdown in Hiring tab</p>
             </div>
           </div>
         </section>
 
-        <hr className="border-border" />
+        {/* SECTION 2: TABS */}
+        <div className="mt-8">
+          <Tabs defaultValue="overview" className="w-full">
+            <div className="sticky top-[72px] z-10 bg-background/95 backdrop-blur-sm py-2 -mx-6 px-6 border-b border-border mb-6 transition-all duration-300">
+              <div className="relative">
+                <div
+                  ref={scrollContainerRef}
+                  className="overflow-x-auto scrollbar-hide py-4 -mx-6"
+                >
+                  <TabsList className="h-auto bg-transparent flex justify-start w-max min-w-full gap-2 pl-6 pr-12">
+                    {tabs.map((tab) => (
+                      <TabsTrigger
+                        key={tab.id}
+                        value={tab.id}
+                        className="rounded-full px-5 py-2.5 text-sm font-medium border border-transparent transition-all duration-300
+                        hover:bg-accent hover:text-foreground hover:shadow-sm
+                        data-[state=active]:bg-foreground data-[state=active]:text-background data-[state=active]:shadow-lg data-[state=active]:border-foreground/10
+                        data-[state=active]:scale-105"
+                      >
+                        {tab.label}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </div>
+                {/* Natural fade gradient with multiple stops for a seamless transition */}
+                <div className={`absolute top-0 bottom-0 right-[-24px] w-40 bg-gradient-to-l from-background via-background/90 via-background/40 to-transparent pointer-events-none z-20 transition-opacity duration-300 ${showRightFade ? 'opacity-100' : 'opacity-0'}`} />
+                <div className={`absolute top-0 bottom-0 left-[-24px] w-12 bg-gradient-to-r from-background via-background/40 to-transparent pointer-events-none z-20 transition-opacity duration-300 ${showLeftFade ? 'opacity-60' : 'opacity-0'}`} />
+              </div>
+            </div>
 
-        {/* SECTION 4: Role & Responsibilities */}
-        <section className="py-10">
-          <h2 className="font-display text-xl font-bold text-foreground mb-6">Role & Responsibilities</h2>
-          <div className="max-w-2xl space-y-4 text-[15px] leading-relaxed text-foreground/90">
-            <p>{company.roleDescription}</p>
-            <p>{company.teamStructure}</p>
-            <div className="flex flex-wrap gap-2 pt-2">
-              {company.technologies.map((t) => (
-                <span key={t} className="rounded-lg bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
-                  {t}
-                </span>
+            <div className="mt-6">
+              {tabs.map((tab) => (
+                <TabsContent key={tab.id} value={tab.id} className="focus:outline-none">
+                  {tab.component}
+                </TabsContent>
               ))}
             </div>
-            <div className="flex gap-6 pt-2 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5"><Building2 className="h-3.5 w-3.5" />{company.department}</span>
-              <span className="flex items-center gap-1.5"><Briefcase className="h-3.5 w-3.5" />{company.employmentType}</span>
-            </div>
-          </div>
-        </section>
-
-        <hr className="border-border" />
-
-        {/* SECTION 5: Selection Process */}
-        <section className="py-10">
-          <h2 className="font-display text-xl font-bold text-foreground mb-6">Selection Process</h2>
-          <div className="max-w-2xl space-y-0">
-            {company.selectionProcess.map((round, i) => (
-              <div key={i} className="relative pl-8 pb-8 last:pb-0">
-                {/* Vertical line */}
-                {i < company.selectionProcess.length - 1 && (
-                  <div className="absolute left-[11px] top-6 bottom-0 w-px bg-border" />
-                )}
-                {/* Dot */}
-                <div className="absolute left-0 top-1.5 h-[22px] w-[22px] rounded-full border-2 border-primary bg-card flex items-center justify-center">
-                  <span className="text-[10px] font-bold text-primary">{i + 1}</span>
-                </div>
-                <div>
-                  <h3 className="font-display font-semibold text-foreground">{round.title}</h3>
-                  <div className="mt-1 flex gap-3 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1"><Globe className="h-3 w-3" />{round.mode}</span>
-                    <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{round.duration}</span>
-                  </div>
-                  <p className="mt-2 text-sm text-foreground/80 leading-relaxed">{round.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <hr className="border-border" />
-
-        {/* SECTION 6: Compensation Breakdown */}
-        <section className="py-10">
-          <h2 className="font-display text-xl font-bold text-foreground mb-6">Compensation Breakdown</h2>
-          <div className="max-w-lg">
-            <p className="text-3xl font-bold text-foreground font-display mb-6">
-              {formatCurrency(company.ctcValue)} <span className="text-base font-normal text-muted-foreground">per annum</span>
-            </p>
-            <div className="space-y-3">
-              {compensationBreakdown.map((item) => (
-                <div key={item.label}>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-sm text-foreground">{item.label}</span>
-                    <span className="text-sm font-medium text-foreground">{formatCurrency(item.value)}</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-muted overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-primary/70 transition-all duration-500"
-                      style={{ width: `${item.percent}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-            {company.serviceAgreement !== "None" && (
-              <p className="mt-5 text-sm text-muted-foreground rounded-xl bg-accent px-4 py-3">
-                Service agreement: {company.serviceAgreement}
-              </p>
-            )}
-          </div>
-        </section>
-
-        <hr className="border-border" />
-
-        {/* SECTION 7: Institutional Placement Data */}
-        <section className="py-10">
-          <h2 className="font-display text-xl font-bold text-foreground mb-6">Institutional Placement Data</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
-            <div className="rounded-2xl bg-card p-5 shadow-soft">
-              <p className="text-2xl font-bold text-foreground font-display">{company.studentsSelected}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Students Selected</p>
-            </div>
-            <div className="rounded-2xl bg-card p-5 shadow-soft">
-              <p className="text-2xl font-bold text-compensation font-display">{company.highestPackage}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Highest Package</p>
-            </div>
-            <div className="rounded-2xl bg-card p-5 shadow-soft">
-              <p className="text-2xl font-bold text-foreground font-display">{company.averagePackage}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Average Package</p>
-            </div>
-            <div className="rounded-2xl bg-card p-5 shadow-soft">
-              <p className="text-lg font-semibold text-foreground font-display">{company.departmentsSelected.join(", ")}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Departments</p>
-            </div>
-          </div>
-        </section>
-
-        <hr className="border-border" />
-
-        {/* SECTION 8: Documents */}
-        <section className="py-10">
-          <h2 className="font-display text-xl font-bold text-foreground mb-6">Documents</h2>
-          <div className="flex flex-wrap gap-3">
-            <button className="flex items-center gap-2 rounded-xl bg-card px-5 py-3 text-sm font-medium text-foreground shadow-soft hover:shadow-card transition-shadow">
-              <Download className="h-4 w-4 text-muted-foreground" />
-              Job Description
-            </button>
-            <button className="flex items-center gap-2 rounded-xl bg-card px-5 py-3 text-sm font-medium text-foreground shadow-soft hover:shadow-card transition-shadow">
-              <Download className="h-4 w-4 text-muted-foreground" />
-              Offer Structure
-            </button>
-          </div>
-        </section>
+          </Tabs>
+        </div>
       </main>
     </Layout>
   );
